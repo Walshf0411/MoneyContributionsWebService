@@ -61,7 +61,7 @@ class FlaskApp:
         contributions = self.contributions_sheet_service.get_all_contributions()
         text_table = TextTableUtil.build_text_table_from_contributions(contributions)
         current_time = self.__get_current_datetime()
-        message = "Contributions as of %s \n\n%s\n\nThanks" % (current_time, text_table)
+        message = "Murti Collection(2022) as of %s \n\n%s\n\nThanks" % (current_time, text_table)
         
         if channel == 'whatsapp':
             sid = self.twilio_client.send_message(body=message)

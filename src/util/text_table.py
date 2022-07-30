@@ -41,7 +41,7 @@ class TextTableUtil:
     @classmethod
     def build_text_table_from_contributions(cls, contributions):
         # removed date_contributed from the columns as it is breaking formatting
-        contributions_headers = ["NAME", "AMOUNT"]
+        contributions_headers = ["NAME", "AMOUNT(Rs)"]
         data = []
         total_amount = 0
         
