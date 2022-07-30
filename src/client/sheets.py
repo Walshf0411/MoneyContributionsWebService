@@ -35,4 +35,7 @@ class GoogleSheetsClient:
         range = range_start + ":" + range_end
         spreadsheet.sheet1.update(range, [data, ])
         spreadsheet.sheet1.update("F1", last_updated_row[0] + ":" + str(new_row_num))
+    
+    def get_all_data(self, spreadsheet):
+        return spreadsheet.sheet1.get_all_values()
         
