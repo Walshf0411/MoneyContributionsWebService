@@ -1,17 +1,11 @@
 import texttable
+from web.components import HtmlTable
 
 class TextTableUtil:
     @staticmethod
     def build_text_table(headers, data):
         table = texttable.Texttable()
         table.set_cols_align(["l", "c"])
-        
-        # table.set_cols_dtype(["a", "i", "t"])
-        
-        # Adjust columns
-        # table.set_cols_valign(["t", "m", "b"])
-        
-        # Insert rows
         rows = []
         rows.append(headers)
         
@@ -38,8 +32,15 @@ class TextTableUtil:
         
         return table
 
+    @staticmethod
+    def build_html_table(headers, data):
+        html_table = HtmlTable(headers)
+        html_table.add_rows(data)
+        html_table.build()
+        return html_table
+
     @classmethod
-    def build_text_table_from_contributions(cls, contributions):
+    def build_text_table_from_contributions(cls, contributions, use_texttable=False, use_html=False):
         # removed date_contributed from the columns as it is breaking formatting
         contributions_headers = ["NAME", "AMOUNT(Rs)"]
         data = []
@@ -51,4 +52,4 @@ class TextTableUtil:
         
         data.append(["TOTAL", str(total_amount)])
 
-        return cls.build_text_table2(contributions_headers, data)
+        return cls.build_text_table(contributions_headers, data) if use_texttable else cls.build_html_table(contributions_headers, data) if use_html else cls.build_text_table2(contributions_headers, data)

@@ -1,24 +1,16 @@
 import sys
-from client.twilio import TwilioClient
+from web.app import FlaskApp
 from client.sheets import GoogleSheetsClient
+from client.twilio import TwilioClient
 from service.sheets import ContributionsSheetsService
-from beans.contributions import Contribution
-from web.flask import FlaskApp
 
-#def main(args):
-    # twilio_client = TwilioClient()
-    # sid = twilio_client.send_message("+919757221040", "Hi Walsh")
-    # google_sheets_client = GoogleSheetsClient("/workspace/WhatsappWebApp/secrets.json")
+def main():
+    google_sheets_client = GoogleSheetsClient("/workspace/WhatsappWebApp/secrets.json")
+    contributions_sheet_service = ContributionsSheetsService(google_sheets_client)
+    twilio_client = TwilioClient()
+    app = FlaskApp(contributions_sheet_service, twilio_client)
 
-    # contributions_sheet_service = ContributionsSheetsService(google_sheets_client)
-    # contributions = [Contribution("Walsh", "7000"), Contribution("Lara", "10000"), Contribution("Ankit", "5000")]
-    
-    # for contribution in contributions:
-    #     contributions_sheet_service.add_new_contribution(contribution)
-    # Importing flask module in the project is mandatory
+    app.run()
 
 if __name__ == '__main__':
-    FlaskApp().run()
-    
-# if __name__ == '__main__':
-#     main(sys.argv[1:])
+    main()
