@@ -53,3 +53,14 @@ class TextTableUtil:
         data.append(["TOTAL", str(total_amount)])
 
         return cls.build_text_table(contributions_headers, data) if use_texttable else cls.build_html_table(contributions_headers, data) if use_html else cls.build_text_table2(contributions_headers, data)
+
+    @classmethod
+    def build_text_table_from_tshirts(cls, tshirts, use_texttable=False, use_html=False):
+        # removed date_contributed from the columns as it is breaking formatting
+        tshirt_headers = ["NAME", "Quantity", "Size"]
+        data = []
+
+        for tshirt in tshirts:
+            data.append([tshirt.name, tshirt.quantity, tshirt.size])
+
+        return cls.build_text_table(tshirt_headers, data) if use_texttable else cls.build_html_table(tshirt_headers, data) if use_html else cls.build_text_table2(tshirt_headers, data)

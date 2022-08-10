@@ -1,8 +1,10 @@
 from flask import Flask, request
 from beans.contributions import Contribution
+from beans.tshirt import Tshirt
 from client.sheets import GoogleSheetsClient
 from client.twilio import TwilioClient
 from service.sheets import ContributionsSheetsService
+from service.sheets import TshirtSheetService
 from flask_api import status
 from util.text_table import TextTableUtil
 import logging
@@ -22,6 +24,7 @@ logging.basicConfig(
 app = Flask(__name__)
 google_sheets_client = GoogleSheetsClient()
 contributions_sheet_service = ContributionsSheetsService(google_sheets_client)
+tshirt_sheet_service = TshirtSheetService(google_sheets_client)
 twilio_client = TwilioClient()
 
 @app.route("/")
@@ -71,6 +74,56 @@ def get_contributions(channel):
                 template_name_or_list="view_contributions.html", 
                 message=html_message_format % message
             )
+    else:
+        return '{"status": "Failure", "message": "Channel %s not supported!"}' % channel, status.HTTP_400_BAD_REQUEST
+
+    return '{"status": "Success", "message": "Contributions logged to channel, %s!"}' % channel
+
+@app.route("/tshirt/add", methods = ["GET", "POST"])
+def add_new_tshirt():
+    if request.method == 'GET':
+        return render_template(template_name_or_list="add_new_tshirt.html")
+
+    if request.method == 'POST':
+        name = request.form.get("name")
+        quantity = request.form.get("quantity")
+        size = request.form.get("size")
+
+        if not name or not quantity or not size:
+            return render_template(
+                template_name_or_list="add_new_tshirt.html", 
+                message="Name, quantity or size is not entered", 
+                status="Failure"
+            )
+        tshirt = Tshirt([name, quantity, size])
+        logging.info("Adding tshirt with name %s, quantity Rs. %s and size Rs. %s " % (
+            tshirt.name, str(tshirt.quantity), str(tshirt.size)))
+        tshirt_sheet_service.add_new_tshirt(tshirt)
+    
+    return render_template(template_name_or_list="add_new_tshirt.html", message="Tshirt added successfully!", status="Success")
+
+
+@app.route("/tshirt/get/<channel>")
+def get_tshirts(channel):
+    logging.info("Logging tshirt to channel %s" % channel)
+    tshirts = tshirt_sheet_service.get_all_tshirt()
+    text_table = TextTableUtil.build_text_table_from_tshirts(
+        tshirts, use_texttable=channel == 'console', use_html=channel == 'web')
+    current_time = get_current_datetime()
+    message = "Murti Tshirt Status(2022) as of %s \n\n%s\n\n" % (
+        current_time, text_table)
+
+    if channel == 'whatsapp':
+        sid = twilio_client.send_message(body=message)
+        logging.info("Message sent on whatsapp, sid=%s" % sid)
+    elif channel == 'console':
+        logging.info("\n" + message)
+    elif channel == 'web':
+        html_message_format = "<div class='container'>%s</div>"
+        return render_template(
+            template_name_or_list="view_tshirts.html",
+            message=html_message_format % message
+        )
     else:
         return '{"status": "Failure", "message": "Channel %s not supported!"}' % channel, status.HTTP_400_BAD_REQUEST
 
