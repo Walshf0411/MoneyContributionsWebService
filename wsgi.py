@@ -3,7 +3,7 @@ from web.app import FlaskApp
 from client.sheets import GoogleSheetsClient
 from client.twilio import TwilioClient
 from service.sheets import ContributionsSheetsService
-
+ 
 def main():
     google_sheets_client = GoogleSheetsClient("/workspace/WhatsappWebApp/secrets.json")
     contributions_sheet_service = ContributionsSheetsService(google_sheets_client)
