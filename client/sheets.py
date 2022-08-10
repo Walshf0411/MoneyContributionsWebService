@@ -8,7 +8,7 @@ scopes = [
 
 class GoogleSheetsClient:
     def __init__(self, secrets_file_path):
-        self.creds = ServiceAccountCredentials.from_json_keyfile_name("secrets.json")
+        self.creds = ServiceAccountCredentials.from_json_keyfile_name("google-credentials.json")
         self.sheets = gspread.authorize(self.creds)
 
     def get_or_create_spreadsheet(self, spreadsheet_name):
