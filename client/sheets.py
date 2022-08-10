@@ -7,7 +7,7 @@ scopes = [
 ]
 
 class GoogleSheetsClient:
-    def __init__(self, secrets_file_path):
+    def __init__(self):
         self.creds = ServiceAccountCredentials.from_json_keyfile_name("google-credentials.json")
         self.sheets = gspread.authorize(self.creds)
 
