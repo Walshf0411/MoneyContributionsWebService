@@ -4,7 +4,7 @@ from client.sheets import GoogleSheetsClient
 from client.twilio import TwilioClient
 from service.sheets import ContributionsSheetsService
  
-def main():
+def main(environ, start_response):
     google_sheets_client = GoogleSheetsClient("/workspace/WhatsappWebApp/secrets.json")
     contributions_sheet_service = ContributionsSheetsService(google_sheets_client)
     twilio_client = TwilioClient()
@@ -13,4 +13,4 @@ def main():
     app.run()
 
 if __name__ == '__main__':
-    main()
+    main(None, None)
