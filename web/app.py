@@ -26,7 +26,7 @@ twilio_client = TwilioClient()
 
 @app.route("/")
 def index():
-    return '<h1>Welcome to the app</h1>'
+    return render_template(template_name_or_list="index.html")
 
 @app.route("/contributions/add",  methods = ['GET', 'POST'])
 def add_contribution():
@@ -67,7 +67,10 @@ def get_contributions(channel):
         logging.info("\n" + message)
     elif channel == 'web':
         html_message_format = "<div class='container'>%s</div>"
-        return html_message_format % message
+        return render_template(
+                template_name_or_list="view_contributions.html", 
+                message=html_message_format % message
+            )
     else:
         return '{"status": "Failure", "message": "Channel %s not supported!"}' % channel, status.HTTP_400_BAD_REQUEST
 
