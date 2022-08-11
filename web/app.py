@@ -92,10 +92,10 @@ def add_new_tshirt():
         payment = request.form.get("payment")
 
         # TODO: accept notes and payment 
-        if not name or not quantity or not size or not payment:
+        if not name or not quantity or not size:
             return render_template(
                 template_name_or_list="add_new_tshirt.html", 
-                message="Name, quantity or size is not entered", 
+                message="Name, quantity, size is not entered", 
                 status="Failure"
             )
         tshirt = Tshirt([-1, name, quantity, size, notes, payment])

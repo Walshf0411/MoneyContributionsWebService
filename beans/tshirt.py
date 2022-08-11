@@ -13,8 +13,8 @@ class Tshirt:
             self.payment = self.__get_or_default(6, data_row, 0)
         elif len(data_row) == 6:
             self.date = str(datetime.now().strftime("%a %d %B, %Y"))
-            self.notes = data_row[4]
-            self.payment = data_row[5]
+            self.notes = self.__get_or_default(4, data_row)
+            self.payment = self.__get_or_default(5, data_row, 0)
 
     def update_date(self):
         self.date = str(datetime.now().strftime("%a %d %B, %Y"))
