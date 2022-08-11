@@ -10,7 +10,7 @@ from util.text_table import TextTableUtil
 import logging
 from datetime import datetime, timezone
 import pytz
-from flask import render_template
+from flask import render_template, redirect
 import json
 
 logging.basicConfig(
@@ -20,7 +20,7 @@ logging.basicConfig(
         logging.StreamHandler()
     ]
 )
-
+TSHIRT_COST = 200
 app = Flask(__name__)
 google_sheets_client = GoogleSheetsClient()
 contributions_sheet_service = ContributionsSheetsService(google_sheets_client)
@@ -88,16 +88,19 @@ def add_new_tshirt():
         name = request.form.get("name")
         quantity = request.form.get("quantity")
         size = request.form.get("size")
+        notes = request.form.get("notes")
+        payment = request.form.get("payment")
 
-        if not name or not quantity or not size:
+        # TODO: accept notes and payment 
+        if not name or not quantity or not size or not payment:
             return render_template(
                 template_name_or_list="add_new_tshirt.html", 
                 message="Name, quantity or size is not entered", 
                 status="Failure"
             )
-        tshirt = Tshirt([-1, name, quantity, size])
-        logging.info("Adding tshirt with name %s, quantity Rs. %s and size Rs. %s " % (
-            tshirt.name, str(tshirt.quantity), str(tshirt.size)))
+        tshirt = Tshirt([-1, name, quantity, size, notes, payment])
+        logging.info("Adding tshirt with name %s, quantity %s, size %s and payment of Rs %s" % (
+            tshirt.name, str(tshirt.quantity), str(tshirt.size), str(tshirt.payment)))
         tshirt_sheet_service.add_new_tshirt(tshirt)
     
     return render_template(template_name_or_list="add_new_tshirt.html", message="Tshirt added successfully!", status="Success")
@@ -119,15 +122,27 @@ def get_tshirts(channel):
     elif channel == 'console':
         logging.info("\n" + message)
     elif channel == 'web':
-        html_message_format = "<div class='container'>%s</div>"
+        tshirt_headers = ["id", "Name", "Quantity", "Size", "Notes", "Payment", "Date"]
         return render_template(
             template_name_or_list="view_tshirts.html",
-            message=html_message_format % message
+            headers=tshirt_headers,
+            rows= tshirts,
+            tshirt_cost=TSHIRT_COST
         )
     else:
         return '{"status": "Failure", "message": "Channel %s not supported!"}' % channel, status.HTTP_400_BAD_REQUEST
 
     return '{"status": "Success", "message": "Contributions logged to channel, %s!"}' % channel
+
+@app.route("/tshirt/update/payment/<id>")
+def update_payment(id):
+    if not (request.args and request.args.get('payment')):
+        return '{"status": "Failure", "message": "Payment is not specified"}', status.HTTP_400_BAD_REQUEST
+
+    payment = int(request.args.get('payment'))
+    tshirt_sheet_service.update_payment(int(id), payment)
+    return redirect("/tshirt/get/web", code=302)
+
 
 def get_current_datetime():
     tz = pytz.timezone('Asia/Kolkata')

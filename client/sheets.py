@@ -26,9 +26,8 @@ class GoogleSheetsClient:
         return sheet.range(range)
 
     def add_row(self, spreadsheet, sheet_name, data):
-        meta_data_cell = "I1"
+        meta_data_cell = "J1"
         first_col_char = "A"
-        # F1 cell will hold the position of the last updated row in the format last_row:<row_num>
         sheet = spreadsheet.worksheet(sheet_name)
         last_updated_row = sheet.acell(meta_data_cell).value.split(":")
         new_row_num = int(last_updated_row[1]) + 1
@@ -43,4 +42,17 @@ class GoogleSheetsClient:
     def get_all_data(self, spreadsheet, sheet_name):
         sheet = spreadsheet.worksheet(sheet_name)
         return sheet.get_all_values()
-        
+
+    def get_row(self, spreadsheet, sheet_name, row_num):
+        sheet = spreadsheet.worksheet(sheet_name)
+        values_list = sheet.row_values(row_num)
+        return values_list
+    
+    def update_row(self, spreadsheet, sheet_name, row_num, data):
+        first_col_char = "A"
+        sheet = spreadsheet.worksheet(sheet_name)
+        range_start = first_col_char + str(row_num)
+        range_end = chr(len(data) + ord(first_col_char)) + str(row_num)
+        range = range_start + ":" + range_end
+        data.insert(0, row_num - 1)
+        sheet.update(range, [data, ])

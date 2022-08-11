@@ -1,4 +1,37 @@
 {% extends "base.html" %}
 {% block main %}
-{{ message|safe }}
+
+<div class="container">
+    <table class="table table-responsive table-bordered table-hover">
+        <thead class="table-dark">
+            {% for header in headers %}
+            <th>{{ header }}</th>
+            {% endfor %}
+            <th>
+                Actions
+            </th>
+        </thead>
+        {% for tshirt in rows %}
+        {% set payment = (tshirt.payment if tshirt.payment else 0) | int %}
+        {% set quantity = tshirt.quantity | int %}
+        {% set tshirt_cost = tshirt_cost | int %}
+        {% set payable = quantity * tshirt_cost | int %}
+        <tr {% if (payable == payment) %}class="table-success"{% else %}class="table-danger"{% endif %}>
+            <td>{{ tshirt.id }}</td>
+            <td>{{ tshirt.name }}</td>
+            <td>{{ tshirt.quantity }}</td>
+            <td>{{ tshirt.size }}</td>
+            <td>{{ tshirt.notes }}</td>
+            <td>{{ tshirt.payment }}</td>
+            <td>{{ tshirt.date }}</td>
+            <td>
+                <a class="btn btn-dark" href="/tshirt/update/payment/{{ tshirt.id }}?payment={{payable}}">Mark Paid?</a>
+            </td>
+        </tr>
+        {% endfor %}
+        <tbody>
+
+        </tbody>
+    </table>
+</div>
 {% endblock %}

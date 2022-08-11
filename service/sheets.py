@@ -30,7 +30,7 @@ class TshirtSheetService:
 
     def add_new_tshirt(self, tshirt):
         self.google_sheets_client.add_row(self.spreadsheet, self.sheet_name, [
-            tshirt.name, tshirt.quantity, tshirt.size, tshirt.date
+            tshirt.name, tshirt.quantity, tshirt.size, tshirt.date, tshirt.notes, tshirt.payment
         ])
 
     def get_all_tshirt(self):
@@ -39,6 +39,19 @@ class TshirtSheetService:
             self.spreadsheet, self.sheet_name)
 
         for i in range(1, len(tshirts_data)):
-            tshirts.append(Tshirt(tshirts_data[i]))
+            tshirts.append(Tshirt(tshirts_data[i], is_excel=True))
 
         return tshirts
+
+    def update_payment(self, id, payment):
+        tshirt_data = self.google_sheets_client.get_row(
+            self.spreadsheet, self.sheet_name, id + 1)
+        tshirt = Tshirt(tshirt_data, is_excel=True)
+        tshirt.payment = payment
+        tshirt.update_date()
+
+        self.google_sheets_client.update_row(
+            self.spreadsheet, self.sheet_name, id + 1, [
+                tshirt.name, tshirt.quantity, tshirt.size, tshirt.date, tshirt.notes, tshirt.payment
+                ])
+
