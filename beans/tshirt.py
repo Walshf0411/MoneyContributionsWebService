@@ -2,9 +2,10 @@ from datetime import datetime
 
 class Tshirt:
     def __init__(self, data_row):
-        self.name = data_row[0]
-        self.quantity = data_row[1]
-        self.size = data_row[2]
+        self.id = data_row[0]
+        self.name = data_row[1]
+        self.quantity = data_row[2]
+        self.size = data_row[3]
         self.date = str(datetime.now().strftime("%a %d %B, %Y"))
 
     def __str__(self):

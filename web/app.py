@@ -95,7 +95,7 @@ def add_new_tshirt():
                 message="Name, quantity or size is not entered", 
                 status="Failure"
             )
-        tshirt = Tshirt([name, quantity, size])
+        tshirt = Tshirt([-1, name, quantity, size])
         logging.info("Adding tshirt with name %s, quantity Rs. %s and size Rs. %s " % (
             tshirt.name, str(tshirt.quantity), str(tshirt.size)))
         tshirt_sheet_service.add_new_tshirt(tshirt)

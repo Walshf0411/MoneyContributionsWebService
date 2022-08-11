@@ -26,16 +26,19 @@ class GoogleSheetsClient:
         return sheet.range(range)
 
     def add_row(self, spreadsheet, sheet_name, data):
+        meta_data_cell = "I1"
+        first_col_char = "A"
         # F1 cell will hold the position of the last updated row in the format last_row:<row_num>
         sheet = spreadsheet.worksheet(sheet_name)
-        last_updated_row = sheet.acell('F1').value.split(":")
+        last_updated_row = sheet.acell(meta_data_cell).value.split(":")
         new_row_num = int(last_updated_row[1]) + 1
-        # TODO update this logic, to fetch columns dynamically
-        range_start = "A" + str(new_row_num)
-        range_end = chr(len(data) + 65) + str(new_row_num)
+        range_start = first_col_char + str(new_row_num)
+        range_end = chr(len(data) + ord(first_col_char)) + str(new_row_num)
         range = range_start + ":" + range_end
+        data.insert(0, new_row_num - 1)
         sheet.update(range, [data, ])
-        sheet.update("F1", last_updated_row[0] + ":" + str(new_row_num))
+        sheet.update(meta_data_cell,
+                     last_updated_row[0] + ":" + str(new_row_num))
     
     def get_all_data(self, spreadsheet, sheet_name):
         sheet = spreadsheet.worksheet(sheet_name)
