@@ -6,10 +6,10 @@ class Contribution:
         if json:
             self.init(json["name"], json["amount"])
         elif excel_row:
-            self.init(excel_row[0], excel_row[1], excel_row[2], excel_row[3])
+            self.init(excel_row[1], excel_row[2], id=excel_row[0], date=excel_row[3])
         
     
-    def init(self, id, name, amount, date=None):
+    def init(self, name, amount, id=None, date=None):
         self.id = id
         self.name = name
         self.amount = amount

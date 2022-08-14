@@ -43,6 +43,14 @@ class TshirtSheetService:
 
         return tshirts
 
+    def get_paginated_data(self, page_num, page_size):
+        tshirts = []
+        start = (page_num - 1) * page_size + 1
+        end = page_num * page_size
+        tshirts_data = self.google_sheets_client.get_rows(self.spreadsheet, self.sheet_name, start)
+
+        return tshirts
+
     def update_payment(self, id, payment):
         tshirt_data = self.google_sheets_client.get_row(
             self.spreadsheet, self.sheet_name, id + 1)

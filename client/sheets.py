@@ -48,6 +48,14 @@ class GoogleSheetsClient:
         values_list = sheet.row_values(row_num)
         return values_list
     
+    def get_rows(self, spreadsheet, sheet_name, start, end):
+        rows = []
+
+        for row_num in range(start, end + 1):
+            rows.append(get_row(row_num))
+        
+        return rows
+    
     def update_row(self, spreadsheet, sheet_name, row_num, data):
         first_col_char = "A"
         sheet = spreadsheet.worksheet(sheet_name)

@@ -46,7 +46,7 @@ def add_contribution():
                 message="Name or amount is not entered", 
                 status="Failure"
             )
-
+        print(amount)
         contribution_json = json.loads('{"name": "%s", "amount": "%s"}' % (name, amount))
         contribution = Contribution(contribution_json)
         logging.info("Adding contribution with name %s and amount Rs. %s" % (
@@ -108,6 +108,8 @@ def add_new_tshirt():
 
 @app.route("/tshirt/get/<channel>")
 def get_tshirts(channel):
+    page_size = 10
+    page = request.args.get("page", default=1)
     logging.info("Logging tshirt to channel %s" % channel)
     tshirts = tshirt_sheet_service.get_all_tshirt()
     text_table = TextTableUtil.build_text_table_from_tshirts(

@@ -12,25 +12,6 @@
         </symbol>
     </svg>
     <h2>Add new contribution</h2>
-    {% if status == 'Success' %}
-    <div class="alert alert-success d-flex align-items-center" role="alert">
-        <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:">
-            <use xlink:href="#check-circle-fill" />
-        </svg>
-        <div>
-            {{ message }}
-        </div>
-    </div>
-    {% elif status == 'Failure' %}
-    <div class="alert alert-danger d-flex align-items-center" role="alert">
-        <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Danger:">
-            <use xlink:href="#exclamation-triangle-fill" />
-        </svg>
-        <div>
-            {{ message }}
-        </div>
-    </div>
-    {% endif %}
 
     <form action="/contributions/add" method="post">
         <div class="mb-3">
