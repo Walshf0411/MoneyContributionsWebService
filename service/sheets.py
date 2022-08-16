@@ -1,3 +1,5 @@
+import math
+
 from beans.contributions import Contribution
 from beans.tshirt import Tshirt
 
@@ -45,11 +47,24 @@ class TshirtSheetService:
 
     def get_paginated_data(self, page_num, page_size):
         tshirts = []
+        row_count = self.google_sheets_client.get_row_count(
+            self.spreadsheet, self.sheet_name)
+        print(row_count)  
+        page_count = math.ceil(row_count / page_size)
         start = (page_num - 1) * page_size + 1
-        end = page_num * page_size
-        tshirts_data = self.google_sheets_client.get_rows(self.spreadsheet, self.sheet_name, start)
 
-        return tshirts
+        if page_num > page_count:
+            return -1, []
+
+        end = min(row_count, page_num * page_size)
+        tshirts_data = self.google_sheets_client.get_rows(
+            self.spreadsheet, self.sheet_name, start, end)
+
+        for i in range(len(tshirts_data)):
+            if tshirts_data[i]:
+                tshirts.append(Tshirt(tshirts_data[i], is_excel=True))
+
+        return page_count, tshirts
 
     def update_payment(self, id, payment):
         tshirt_data = self.google_sheets_client.get_row(

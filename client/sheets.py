@@ -51,8 +51,8 @@ class GoogleSheetsClient:
     def get_rows(self, spreadsheet, sheet_name, start, end):
         rows = []
 
-        for row_num in range(start, end + 1):
-            rows.append(get_row(row_num))
+        for row_num in range(start + 1, end + 2):
+            rows.append(self.get_row(spreadsheet, sheet_name, row_num))
         
         return rows
     
@@ -64,3 +64,9 @@ class GoogleSheetsClient:
         range = range_start + ":" + range_end
         data.insert(0, row_num - 1)
         sheet.update(range, [data, ])
+
+    def get_row_count(self, spreadsheet, sheet_name):
+        meta_data_cell = "J1"
+        sheet = spreadsheet.worksheet(sheet_name)
+        last_updated_row = sheet.acell(meta_data_cell).value.split(":")
+        return int(last_updated_row[1])

@@ -107,15 +107,16 @@ def add_new_tshirt():
 
 @app.route("/tshirt/get/<channel>")
 def get_tshirts(channel):
-    page_size = 10
-    page = request.args.get("page", default=1)
     logging.info("Logging tshirt to channel %s" % channel)
-    tshirts = tshirt_sheet_service.get_all_tshirt()
-    text_table = TextTableUtil.build_text_table_from_tshirts(
-        tshirts, use_texttable=channel == 'console', use_html=channel == 'web')
-    current_time = get_current_datetime()
-    message = "Murti Tshirt Status(2022) as of %s \n\n%s\n\n" % (
-        current_time, text_table)
+    tshirts = None
+    if channel != 'web':
+        tshirts = tshirt_sheet_service.get_all_tshirt()
+
+        text_table = TextTableUtil.build_text_table_from_tshirts(
+            tshirts, use_texttable=channel == 'console', use_html=channel == 'web')
+        current_time = get_current_datetime()
+        message = "Murti Tshirt Status(2022) as of %s \n\n%s\n\n" % (
+            current_time, text_table)
 
     if channel == 'whatsapp':
         sid = twilio_client.send_message(body=message)
@@ -123,11 +124,16 @@ def get_tshirts(channel):
     elif channel == 'console':
         logging.info("\n" + message)
     elif channel == 'web':
+        page_size = 10
+        page = int(request.args.get("page", default=1))
+        pages, tshirts = tshirt_sheet_service.get_paginated_data(page, page_size)
         tshirt_headers = ["id", "Name", "Quantity", "Size", "Notes", "Payment", "Date"]
         return render_template(
             template_name_or_list="view_tshirts.html",
             headers=tshirt_headers,
-            rows= tshirts,
+            pages=pages,
+            current_page=page,
+            rows=tshirts,
             tshirt_cost=TSHIRT_COST
         )
     else:

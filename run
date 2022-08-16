@@ -1,0 +1,5 @@
+#!/bin/bash
+export TWILIO_ACCOUNT_SID=adaad; 
+export TWILIO_AUTH_TOKEN=adad
+
+python3 wsgi.py
