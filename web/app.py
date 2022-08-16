@@ -86,12 +86,11 @@ def add_new_tshirt():
 
     if request.method == 'POST':
         name = request.form.get("name")
-        quantity = request.form.get("quantity")
-        size = request.form.get("size")
+        quantity = int(request.form.get("quantity"))
+        size = int(request.form.get("size"))
         notes = request.form.get("notes")
-        payment = request.form.get("payment")
+        payment = int(request.form.get("payment"))
 
-        # TODO: accept notes and payment 
         if not name or not quantity or not size:
             return render_template(
                 template_name_or_list="add_new_tshirt.html", 
